@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     public float jumpForce; // The force applied to the player when they jump 
     public float gravityModifier; // The gravity modifier applied to the player rigidbody 
     public bool isOnGround;
+    public bool gameOver;
     private void Start()
     {
         playerRb = GetComponent<Rigidbody>(); // Get the player's rigidbody component 
@@ -22,6 +23,15 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        isOnGround = true; // Set the isOnGround flag to true when the player collides with the ground
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isOnGround = true; // Set the isOnGround flag to true when the player collides with the ground
+        }
+        else if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Debug.Log("Game Over!");
+            gameOver = true; // Set the gameOver flag to true when the player collides with an obstacle
+        }
+        
     }
 }
