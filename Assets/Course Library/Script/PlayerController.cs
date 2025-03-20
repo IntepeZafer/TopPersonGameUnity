@@ -10,12 +10,16 @@ public class PlayerController : MonoBehaviour
     private Animator playerAnim; // The player's animator component
     /*public ParticleSystem expolitonParticle;*/ // The particle system attached to the player when they die
     public ParticleSystem dirtParticle; // The particle system attached to the ground when the player jumps 
-    public GameObject particleSystem;
+    public GameObject particleSystem; // The particle system attached to the player when they die
+    public AudioClip JumpSound; // The sound played when the player jumps 
+    public AudioClip crashSound; // The sound played when the player dies 
+    private AudioSource PlayerAudio; // The audio source component attached to the player object 
     private void Start()
     {
         playerRb = GetComponent<Rigidbody>(); // Get the player's rigidbody component 
         Physics.gravity *= gravityModifier; // Apply the gravity modifier to the gravity vector 
         playerAnim = GetComponent<Animator>(); // Get the player's animator component 
+        PlayerAudio = GetComponent<AudioSource>(); // Get the audio source component attached to the player object
     }
     private void Update()
     {
@@ -25,6 +29,7 @@ public class PlayerController : MonoBehaviour
             isOnGround = false; // Set the isOnGround flag to false
             playerAnim.SetTrigger("Jump_trig"); // Trigger the Jump animation
             dirtParticle.Stop(); // Stop the particle system attached to the ground
+            PlayerAudio.PlayOneShot(JumpSound, 1.0f);
         }
 
     }
@@ -33,7 +38,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true; // Set the isOnGround flag to true when the player collides with the ground
-            dirtParticle.Play(); // Play the particle system attached to the ground 
+            dirtParticle.Play(); // Play the particle system attached to the ground
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
@@ -43,6 +48,8 @@ public class PlayerController : MonoBehaviour
             playerAnim.SetInteger("DeathType_int", 1); // Set the DeathType animation parameter to 1
             //expolitonParticle.Play(); // Play the particle system attached to the player
             Instantiate(particleSystem, transform.position, transform.rotation);
+            dirtParticle.Stop();
+            PlayerAudio.PlayOneShot(crashSound, 1.0f);
         }
         
     }
